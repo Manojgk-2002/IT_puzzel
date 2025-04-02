@@ -369,4 +369,4 @@ if __name__ == '__main__':
         for q in ['question1', 'question2', 'question3']:
             os.makedirs(f"static/images/{q}", exist_ok=True)
 
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)  # debug=False for production
