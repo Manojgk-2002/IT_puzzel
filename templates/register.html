@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Join IT Puzzle{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --puzzle-primary: #4a6bff;
+        --puzzle-secondary: #6c5ce7;
+        --puzzle-accent: #00cec9;
+        --puzzle-dark: #2d3436;
+        --puzzle-light: #f5f6fa;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+    }
+
+    .auth-container {
+        max-width: 450px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+    }
+
+    .auth-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--puzzle-primary), var(--puzzle-accent));
+    }
+
+    .puzzle-icon {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 15px;
+    }
+
+    h1 {
+        color: var(--puzzle-dark);
+        margin-bottom: 25px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+        position: relative;
+    }
+
+    label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+        color: var(--puzzle-dark);
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    input:focus {
+        border-color: var(--puzzle-accent);
+        box-shadow: 0 0 0 3px rgba(0, 206, 201, 0.1);
+        outline: none;
+    }
+
+    .password-strength {
+        height: 4px;
+        background: #eee;
+        margin-top: 5px;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .strength-meter {
+        height: 100%;
+        width: 0;
+        transition: width 0.3s;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--puzzle-primary), var(--puzzle-secondary));
+        border: none;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 8px;
+        margin-top: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    p {
+        margin-top: 20px;
+        color: #666;
+    }
+
+    a {
+        color: var(--puzzle-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    a:hover {
+        color: var(--puzzle-secondary);
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: #ff4757;
+        font-size: 14px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .puzzle-pieces {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 25px 0;
+        opacity: 0.7;
+    }
+
+    .puzzle-piece {
+        width: 30px;
+        height: 30px;
+        background: var(--puzzle-accent);
+        clip-path: polygon(
+            0% 15%, 15% 15%, 15% 0%, 85% 0%,
+            85% 15%, 100% 15%, 100% 85%,
+            85% 85%, 85% 100%, 15% 100%,
+            15% 85%, 0% 85%
+        );
+    }
+
+    .terms {
+        font-size: 14px;
+        color: #666;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="auth-container">
+    <h1>Join IT Puzzle Challenge</h1>
+
+
+
+    <form method="POST" class="auth-form" id="registerForm">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required placeholder="Your puzzle solver name">
+            <div class="error-message" id="username-error">Username must be at least 4 characters</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required placeholder="Your contact email">
+            <div class="error-message" id="email-error">Please enter a valid email</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required placeholder="Create your secret code">
+            <div class="password-strength">
+                <div class="strength-meter" id="strengthMeter"></div>
+            </div>
+            <div class="error-message" id="password-error">Password must be at least 8 characters</div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" name="confirm_password" id="confirm_password" required placeholder="Repeat your secret code">
+            <div class="error-message" id="confirm-error">Passwords don't match</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Complete the Puzzle</button>
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        const strengthMeter = document.getElementById('strengthMeter');
+
+        // Username validation
+        username.addEventListener('input', function() {
+            const error = document.getElementById('username-error');
+            if (username.value.length < 4) {
+                error.style.display = 'block';
+                username.style.borderColor = '#ff4757';
+            } else {
+                error.style.display = 'none';
+                username.style.borderColor = '#e0e0e0';
+            }
+        });
+
+        // Email validation
+        email.addEventListener('input', function() {
+            const error = document.getElementById('email-error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                error.style.display = 'block';
+                email.style.borderColor = '#ff4757';
+            } else {
+                error.style.display = 'none';
+                email.style.borderColor = '#e0e0e0';
+            }
+        });
+
+        // Password strength meter
+        password.addEventListener('input', function() {
+            const error = document.getElementById('password-error');
+            const strength = calculatePasswordStrength(password.value);
+
+            // Update strength meter
+            strengthMeter.style.width = strength.percentage + '%';
+            strengthMeter.style.backgroundColor = strength.color;
+
+            // Show error if password is too short
+            if (password.value.length > 0 && password.value.length < 8) {
+                error.style.display = 'block';
+                password.style.borderColor = '#ff4757';
+            } else {
+                error.style.display = 'none';
+                password.style.borderColor = '#e0e0e0';
+            }
+
+            // Check if passwords match
+            if (confirmPassword.value.length > 0) {
+                validatePasswordMatch();
+            }
+        });
+
+        // Confirm password validation
+        confirmPassword.addEventListener('input', validatePasswordMatch);
+
+        function validatePasswordMatch() {
+            const error = document.getElementById('confirm-error');
+            if (password.value !== confirmPassword.value) {
+                error.style.display = 'block';
+                confirmPassword.style.borderColor = '#ff4757';
+            } else {
+                error.style.display = 'none';
+                confirmPassword.style.borderColor = '#e0e0e0';
+            }
+        }
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+
+            // Length check
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+
+            // Character variety
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+            // Calculate percentage and color
+            let percentage = (strength / 5) * 100;
+            let color = '#ff4757'; // Red
+
+            if (percentage >= 60) color = '#ffa502'; // Orange
+            if (percentage >= 80) color = '#2ed573'; // Green
+
+            return { percentage, color };
+        }
+
+        // Form submission validation
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            // Validate username
+            if (username.value.length < 4) {
+                document.getElementById('username-error').style.display = 'block';
+                username.style.borderColor = '#ff4757';
+                isValid = false;
+            }
+
+            // Validate email
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('email-error').style.display = 'block';
+                email.style.borderColor = '#ff4757';
+                isValid = false;
+            }
+
+            // Validate password
+            if (password.value.length < 8) {
+                document.getElementById('password-error').style.display = 'block';
+                password.style.borderColor = '#ff4757';
+                isValid = false;
+            }
+
+            // Validate password match
+            if (password.value !== confirmPassword.value) {
+                document.getElementById('confirm-error').style.display = 'block';
+                confirmPassword.style.borderColor = '#ff4757';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>IT Puzzle Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --error-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-color);
+            text-align: center;
+            overflow-x: hidden;
+            font-size: 14px; /* Base font size reduced */
+        }
+
+        .quiz-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0, #f72585);
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+            white-space: nowrap;
+        }
+
+        .score-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+
+        .question-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 700;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .image-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            animation: slideUp 0.5s ease;
+        }
+
+        .image-box {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .image-box img {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .image-box:hover img {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .symbol {
+            font-size: 24px;
+            color: var(--primary-color);
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .answer-form {
+            margin: 25px 0;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .answer-input {
+            font-size: 14px;
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 300px;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            outline: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .answer-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .submit-btn {
+            font-size: 14px;
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-container {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .correct {
+            background: rgba(76, 201, 240, 0.1);
+            border: 2px solid var(--success-color);
+            color: #1a936f;
+        }
+
+        .wrong {
+            background: rgba(247, 37, 133, 0.1);
+            border: 2px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-icon {
+            font-size: 18px;
+        }
+
+        .user-answer {
+            font-size: 14px;
+            margin: 10px 0;
+            color: #6c757d;
+        }
+
+        .correct-answer {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .next-btn {
+            font-size: 14px;
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+        }
+
+        .next-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .next-btn:active {
+            transform: translateY(0);
+        }
+
+        .next-btn.final-btn {
+            background: var(--error-color);
+        }
+
+        .next-btn.final-btn:hover {
+            background: #d91a6e;
+        }
+
+        .question-mark {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #adb5bd;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            animation: pulse 2s infinite;
+        }
+
+        .question-mark span {
+            font-size: 30px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear forwards;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive styles */
+        @media (min-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+
+            .question-title {
+                font-size: 20px;
+            }
+
+            .image-box img {
+                max-width: 200px;
+                max-height: 200px;
+            }
+
+            .question-mark {
+                width: 120px;
+                height: 120px;
+            }
+
+            .question-mark span {
+                font-size: 40px;
+            }
+
+            .answer-input, .submit-btn, .next-btn {
+                font-size: 15px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .quiz-container {
+                padding: 30px;
+            }
+
+            .question-title {
+                font-size: 22px;
+            }
+
+            .progress-text, .score-text {
+                font-size: 14px;
+            }
+
+            .image-box img {
+                max-width: 250px;
+                max-height: 250px;
+            }
+
+            .question-mark {
+                width: 150px;
+                height: 150px;
+            }
+
+            .question-mark span {
+                font-size: 50px;
+            }
+
+            .symbol {
+                font-size: 30px;
+            }
+
+            .answer-input, .submit-btn, .next-btn {
+                font-size: 16px;
+                padding: 15px 25px;
+            }
+
+            .result-title {
+                font-size: 18px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .question-title {
+                font-size: 24px;
+            }
+
+            .image-box img {
+                max-width: 300px;
+                max-height: 300px;
+            }
+
+            .question-mark {
+                width: 200px;
+                height: 200px;
+            }
+
+            .question-mark span {
+                font-size: 60px;
+            }
+
+            .symbol {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="progress-container">
+            <div class="progress-text">Question {{ current_question }} of {{ total_questions }}</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ (current_question / total_questions) * 100 }}%"></div>
+            </div>
+            <div class="score-text">Score: {{ score }}/{{ total_questions }}</div>
+        </div>
+
+        <h1 class="question-title">What do these IT icons combine to make?</h1>
+
+        <div class="image-row">
+            <div class="image-box">
+                <img src="{{ url_for('static', filename='images/' + image1) }}" alt="Image 1" class="puzzle-image">
+            </div>
+            <span class="symbol">+</span>
+            <div class="image-box">
+                <img src="{{ url_for('static', filename='images/' + image2) }}" alt="Image 2" class="puzzle-image">
+            </div>
+            <span class="symbol">=</span>
+            <div class="image-box">
+                <div class="question-mark">
+                    <span>?</span>
+                </div>
+            </div>
+        </div>
+
+        {% if not submitted %}
+        <form class="answer-form" method="POST">
+            <input type="text" name="answer" class="answer-input" placeholder="Type your answer here..." required>
+            <button type="submit" class="submit-btn">Submit Answer</button>
+        </form>
+        {% endif %}
+
+        {% if submitted %}
+        <div class="result-container {{ message.class }}">
+            <div class="result-title">
+                {% if message.class == 'correct' %}
+                <span class="result-icon">✓</span> Correct!
+                {% else %}
+                <span class="result-icon">✗</span> Not Quite!
+                {% endif %}
+            </div>
+            <div class="user-answer">
+                You answered: <strong>"{{ message.user_input }}"</strong>
+            </div>
+            {% if message.class == "wrong" %}
+            <div class="correct-answer">
+                The correct answer is: <strong>"{{ puzzle.answer }}"</strong>
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            {% if not is_last_question %}
+            <button type="submit" name="next" class="next-btn">Next Question →</button>
+            {% else %}
+            <button type="submit" name="submit" class="next-btn final-btn">Finish Quiz</button>
+            {% endif %}
+        </form>
+        {% endif %}
+    </div>
+
+    <script>
+        // Prevent back button
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            history.go(1);
+        };
+
+        // Add animation to puzzle images on hover
+        document.querySelectorAll('.puzzle-image').forEach(img => {
+            img.addEventListener('mouseenter', function() {
+                this.style.transform = 'rotate(5deg) scale(1.05)';
+            });
+            img.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        // Create confetti effect for correct answers
+        function createConfetti() {
+            if (document.querySelector('.result-container.correct')) {
+                const colors = ['#4361ee', '#4cc9f0', '#f72585', '#7209b7', '#3a0ca3'];
+                const container = document.querySelector('.quiz-container');
+
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.width = Math.random() * 6 + 4 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    container.appendChild(confetti);
+
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+        }
+
+        // Run confetti if correct answer
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(createConfetti, 500);
+        });
+
+        // Focus on answer input when page loads
+        const answerInput = document.querySelector('.answer-input');
+        if (answerInput) {
+            answerInput.focus();
+        }
+    </script>
+</body>
+</html>

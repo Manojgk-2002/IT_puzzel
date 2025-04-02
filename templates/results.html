@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+    <style>
+        .results-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4361ee;
+            margin: 1rem 0;
+        }
+
+        .time-display {
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #f8f9fa;
+            border-radius: 50px;
+            height: 20px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+            width: {{ (score/total)*100 }}%;
+            transition: width 1s ease;
+        }
+
+        .actions {
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 0 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4361ee, #3f37c9);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4361ee;
+            border: 2px solid #4361ee;
+        }
+
+        @media (max-width: 768px) {
+            .results-container {
+                padding: 1.5rem;
+            }
+
+            .score-display {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+
+    <div class="results-container">
+        <h1>Quiz Completed!</h1>
+
+        <div class="score-display">
+            {{ score }}/{{ total }}
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="time-display">
+            Time: {{ "%.2f"|format(time_taken) }} seconds
+        </div>
+
+        <p>{% if score == total %}Perfect score! Amazing!{% elif score/total >= 0.7 %}Good job!{% else %}Keep practicing!{% endif %}</p>
+
+        <div class="actions">
+            <a href="{{ url_for('account') }}" class="btn btn-primary">
+                View Your Account
+            </a>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                Back to Home
+            </a>
+        </div>
+    </div>
+{% endblock %}
